@@ -2,6 +2,11 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { createTables, openDb } from "./db/database";
 
+interface SQLiteError extends Error {
+  errno?: number;
+  code?: string;
+}
+
 dotenv.config(); // 環境変数読み込み
 
 const app: Express = express();
