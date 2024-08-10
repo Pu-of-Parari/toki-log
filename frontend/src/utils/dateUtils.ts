@@ -26,9 +26,9 @@ function formatSecondsToTime(seconds: number): string {
   const secs = seconds % 60;
 
   // 数値を2桁にフォーマット
-  const formattedHrs = String(hrs).padStart(2, '0');
-  const formattedMins = String(mins).padStart(2, '0');
-  const formattedSecs = String(secs).padStart(2, '0');
+  const formattedHrs = String(hrs).padStart(2, "0");
+  const formattedMins = String(mins).padStart(2, "0");
+  const formattedSecs = String(secs).padStart(2, "0");
 
   // フォーマットして返す
   return `${formattedHrs}:${formattedMins}:${formattedSecs}`;

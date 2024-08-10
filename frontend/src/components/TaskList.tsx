@@ -11,7 +11,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { formatDate, parseDate } from "../utils/dateUtils";
+import { formatDate, parseDate, formatSecondsToTime } from "../utils/dateUtils";
 import ConfirmationModal from "./ConfirmationModal";
 import TaskEditModal from "./TaskEditModal";
 import { User } from "./UserList";
@@ -24,6 +24,7 @@ export interface Task {
   description: string;
   start_time: number;
   end_time: number;
+  work_time: number;
   created_by: number;
 }
 
@@ -161,7 +162,8 @@ const TaskList: React.FC<TaskListProps> = ({
       <Thead>
         <Tr>
           <Th>ID</Th>
-          <Th>Task Name</Th>
+          <Th>Task name</Th>
+          <Th>Work time</Th>
           <Th>Start time</Th>
           <Th>End time</Th>
           <Th>Created by</Th>
@@ -172,6 +174,7 @@ const TaskList: React.FC<TaskListProps> = ({
           <Tr key={task.id}>
             <Td>{task.id}</Td>
             <Td>{task.name}</Td>
+            <Td>{formatSecondsToTime(task.work_time)}</Td>
             <Td>{formatDate(task.start_time)}</Td>
             <Td>{formatDate(task.end_time)}</Td>
             <Td>{id2username(task.created_by)}</Td>
