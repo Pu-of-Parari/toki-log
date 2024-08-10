@@ -16,8 +16,8 @@ export async function createTables(): Promise<void> {
   try {
     await db.exec(`CREATE TABLE IF NOT EXISTS users(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL,
-      email TEXT NOT NULL
+      name TEXT NOT NULL,
+      UNIQUE (name)
       );
     `);
 
