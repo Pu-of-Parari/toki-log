@@ -16,8 +16,8 @@ export async function createTables(): Promise<void> {
   try {
     await db.exec(`CREATE TABLE IF NOT EXISTS users(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL,
-      email TEXT NOT NULL
+      name TEXT NOT NULL,
+      UNIQUE (name)
       );
     `);
 
@@ -27,6 +27,7 @@ export async function createTables(): Promise<void> {
           description TEXT,
           start_time DATETIME,
           end_time DATETIME,
+          work_time INTEGER DEFAULT NULL,
           created_by INTEGER,
           FOREIGN KEY (created_by) REFERENCES users (id)
       );`);
@@ -43,6 +44,17 @@ export async function createTables(): Promise<void> {
           FOREIGN KEY (tag_id) REFERENCES tags (id),
           PRIMARY KEY (task_id, tag_id)
       );`);
+
+    await db.exec(`CREATE TRIGGER IF NOT EXISTS update_work_time
+      UPDATE OF end_time ON tasks
+      FOR EACH ROW
+      WHEN NEW.end_time IS NOT NULL AND NEW.start_time IS NOT NULL
+      BEGIN
+          UPDATE tasks SET work_time = (
+              NEW.end_time - NEW.start_time
+          ) / 1000
+          WHERE id = NEW.id;
+      END;`);
     console.log("Table created");
   } catch (error) {
     console.error("Error createing tables:", error);

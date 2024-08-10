@@ -14,4 +14,24 @@ function formatDate(unixTimestamp: number): string {
   return new Intl.DateTimeFormat("ja-JP", options).format(date);
 }
 
-export { formatDate };
+function parseDate(dateString: string): number {
+  const date = new Date(dateString);
+  return date.getTime();
+}
+
+function formatSecondsToTime(seconds: number): string {
+  // 整数の部分を取得
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  // 数値を2桁にフォーマット
+  const formattedHrs = String(hrs).padStart(2, "0");
+  const formattedMins = String(mins).padStart(2, "0");
+  const formattedSecs = String(secs).padStart(2, "0");
+
+  // フォーマットして返す
+  return `${formattedHrs}:${formattedMins}:${formattedSecs}`;
+}
+
+export { formatDate, parseDate, formatSecondsToTime };
