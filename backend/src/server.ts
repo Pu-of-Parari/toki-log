@@ -112,6 +112,84 @@ app.delete("/api/tasks/:id", async (req: Request, res: Response) => {
   }
 });
 
+// user一覧取得
+app.get("/api/users", async (req: Request, res: Response) => {
+  try {
+    const db = await openDb();
+    const tasks = await db.all("SELECT * FROM users;");
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to retrieve users" });
+  }
+});
+
+// user作成
+app.post("/api/users", async (req: Request, res: Response) => {
+  const { name } = req.body;
+  try {
+    const db = await openDb();
+    const result = await db.run(`INSERT INTO users (name) VALUES (?)`, name);
+    res.status(201).send({
+      id: result.lastID,
+      name: name,
+      message: "User created successfully.",
+    });
+  } catch (error) {
+    const sqliteError = error as SQLiteError;
+    if (
+      sqliteError.message ===
+      "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.name"
+    ) {
+      res.status(500).send({ error: "Username already exists." });
+    } else {
+      res.status(500).send({ error: "Failed to create a new user." });
+    }
+  }
+});
+
+// user情報編集
+app.put("/api/users/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  try {
+    const db = await openDb();
+    const result = await db.run(
+      `UPDATE users SET name = COALESCE(?, name) WHERE id = ?`,
+      [name, id]
+    );
+
+    if (result.changes && result.changes > 0) {
+      res
+        .status(200)
+        .json({ message: "User updated successfully", id: id, name: name });
+    } else {
+      res.status(404).send({ error: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Failed to update user" });
+  }
+});
+
+// user情報削除
+app.delete("/api/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const db = await openDb();
+    const result = await db.run(`DELETE FROM users WHERE id = ?`, id);
+
+    if (result.changes && result.changes > 0) {
+      res.status(200).json({ message: "User deleted successfully" });
+    } else {
+      res.status(404).send({ error: "User not found" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Failed to delete user" });
+  }
+});
+
 // サーバー起動とDB初期設定
 async function startServer(): Promise<void> {
   try {
