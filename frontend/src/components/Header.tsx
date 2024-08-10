@@ -15,8 +15,8 @@ import Sidebar from "./SideBar";
 const Header: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const bgColor = useColorModeValue("blue.500", "blue.800");
-  const textColor = useColorModeValue("white", "gray.200");
+  const bgColor = useColorModeValue("gray.200", "gray.700");
+  const textColor = useColorModeValue("black", "gray.200");
   const SwitchIcon = colorMode === "light" ? MoonIcon : SunIcon;
 
   return (
@@ -30,7 +30,7 @@ const Header: React.FC = () => {
           size="lg"
         />
         <Text fontSize="xl" fontWeight="bold">
-          Toki-Log
+          ⏳ Toki-Log
         </Text>
         <IconButton
           aria-label={`Switch to ${
@@ -39,7 +39,7 @@ const Header: React.FC = () => {
           icon={<SwitchIcon />}
           onClick={toggleColorMode}
           size="md"
-          colorScheme="teal"
+          variant=""
         />
       </Flex>
       <Sidebar isOpen={isOpen} onClose={onClose} />

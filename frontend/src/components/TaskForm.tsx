@@ -17,8 +17,8 @@ interface TaskFormProps {
 }
 
 interface User {
-  id: number,
-  name: string
+  id: number;
+  name: string;
 }
 
 const BASE = `${process.env.REACT_APP_API_URL}/api`;
@@ -30,22 +30,25 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskUpdate, users }) => {
   const [taskId, setTaskId] = useState<number | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const toast = useToast();
-  const { taskStartTime, setTaskStartTime, taskUserId, setTaskUserId } = useContext(TaskTimeContext);
+  const { taskStartTime, setTaskStartTime, taskUserId, setTaskUserId } =
+    useContext(TaskTimeContext);
   const isRunningRef = useRef(isRunning);
-  const taskStartTimeRef = useRef(taskStartTime)
+  const taskStartTimeRef = useRef(taskStartTime);
 
   // isRunningは、時間計測中にリロードされると解除されてしまうので、バックエンドとの対応が必要
 
   useEffect(() => {
     isRunningRef.current = isRunning;
-    taskStartTimeRef.current = taskStartTime
+    taskStartTimeRef.current = taskStartTime;
   }, [isRunning, taskStartTime]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log(isRunningRef.current, Date.now())
+      console.log(isRunningRef.current, Date.now());
       if (isRunningRef.current) {
-        setProcessUnixtime(Math.floor((Date.now() - taskStartTimeRef.current) / 1000));
+        setProcessUnixtime(
+          Math.floor((Date.now() - taskStartTimeRef.current) / 1000)
+        );
       }
     }, 1000);
 
@@ -79,7 +82,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskUpdate, users }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name: taskName, description: taskDescription, created_by: taskUserId }),
+      body: JSON.stringify({
+        name: taskName,
+        description: taskDescription,
+        created_by: taskUserId,
+      }),
     });
     const data = await response.json();
     if (response.ok) {
@@ -92,7 +99,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskUpdate, users }) => {
         duration: 3000,
         isClosable: true,
       });
-      setTaskStartTime(Date.now())
+      setTaskStartTime(Date.now());
     } else {
       toast({
         title: "Error",
@@ -137,7 +144,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskUpdate, users }) => {
     }
   };
 
-  //TODO: User選択が、DB取得ではなく、ハリボテになってるのでなおす
   return (
     <Box height="120px" borderRadius="md" borderWidth="1px">
       <Flex direction="column" alignItems="flex-start" p={4}>
@@ -166,9 +172,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskUpdate, users }) => {
             width="10%"
             ml="3%"
           >
-            {isRunning ? "Stop Task" : "Start Task"}
+            {isRunning ? "■ Stop" : "▶ Start"}
           </Button>
-          <Text width="20%" fontSize="30px" textAlign="center">
+          <Text width="20%" fontSize="30px" ml="1%" textAlign="center">
             {formatSecondsToTime(processUnixtime)}
           </Text>
         </Flex>

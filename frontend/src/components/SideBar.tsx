@@ -29,10 +29,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <DrawerBody>
               <VStack align="flex-start" p={2}>
                 <Link as={RouterLink} to="/" onClick={onClose}>
-                  Home
+                  ✔ タスク記録
                 </Link>
                 <Link as={RouterLink} to="/users" onClick={onClose}>
-                  Users
+                  ✔ ユーザ管理
                 </Link>
               </VStack>
             </DrawerBody>
