@@ -22,16 +22,16 @@ app.get("/", (req: Request, res: Response) => {
 
 // task開始
 app.post("/api/tasks/start", async (req: Request, res: Response) => {
-  const { name, description } = req.body;
+  const { name, description, created_by } = req.body;
   const startTime = new Date();
   try {
-    //const db = await dbPromise;
     const db = await openDb();
     const result = await db.run(
-      `INSERT INTO tasks (name, description, start_time) VALUES (?, ?, ?)`,
+      `INSERT INTO tasks (name, description, start_time, created_by) VALUES (?, ?, ?, ?)`,
       name,
       description,
-      startTime
+      startTime,
+      created_by
     );
     res
       .status(201)
@@ -47,7 +47,6 @@ app.post("/api/tasks/stop", async (req: Request, res: Response) => {
   const { id } = req.body;
   const endTime = new Date();
   try {
-    //const db = await dbPromise;
     const db = await openDb();
     await db.run(`UPDATE tasks SET end_time = ? WHERE id = ?`, endTime, id);
     res.status(200).send({ message: "Task stopped successfully." });
@@ -60,7 +59,6 @@ app.post("/api/tasks/stop", async (req: Request, res: Response) => {
 // task一覧取得
 app.get("/api/tasks", async (req: Request, res: Response) => {
   try {
-    //const db = await dbPromise;
     const db = await openDb();
     const tasks = await db.all("SELECT * FROM tasks ORDER BY start_time DESC");
     res.status(200).json(tasks);
