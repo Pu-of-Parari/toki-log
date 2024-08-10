@@ -65,6 +65,53 @@ app.get("/api/tasks", async (req: Request, res: Response) => {
   }
 });
 
+// task編集
+app.put("/api/tasks/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, description, start_time, end_time } = req.body;
+
+  try {
+    const db = await openDb();
+    const result = await db.run(
+      `UPDATE tasks SET
+      name = COALESCE(?, name),
+      description = COALESCE(?, description),
+      start_time = COALESCE(?, start_time),
+      end_time = COALESCE(?, end_time)
+      WHERE id = ?`,
+      [name, description, start_time, end_time, id]
+    );
+
+    if (result.changes && result.changes > 0) {
+      res
+        .status(200)
+        .json({ message: "Task updated successfully", id: id, name: name });
+    } else {
+      res.status(404).send({ error: "Task not found" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Failed to update task" });
+  }
+});
+
+// task削除
+app.delete("/api/tasks/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const db = await openDb();
+    const result = await db.run(`DELETE FROM tasks WHERE id = ?`, id);
+
+    if (result.changes && result.changes > 0) {
+      res.status(200).json({ message: "Task deleted successfully" });
+    } else {
+      res.status(404).send({ error: "Task not found" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Failed to delete task" });
+  }
+});
+
 // サーバー起動とDB初期設定
 async function startServer(): Promise<void> {
   try {
